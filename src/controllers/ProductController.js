@@ -1,5 +1,19 @@
 const knex = require("../database");
 
+const filterProperties = (data) => {
+  let { name, manufactureDate, perishable, expirationDate, price } = data;
+
+  if (perishable === false) expirationDate = null;
+
+  return {
+    name,
+    manufactureDate,
+    perishable,
+    expirationDate,
+    price,
+  };
+};
+
 const ProductController = {
   async index(req, res, next) {
     try {
@@ -16,26 +30,6 @@ const ProductController = {
   },
 
   async create(req, res, next) {
-    const filterProperties = (data) => {
-      let {
-        name = null,
-        manufactureDate = null,
-        perishable = null,
-        expirationDate = null,
-        price = null,
-      } = data;
-
-      if (perishable === false) expirationDate = null;
-
-      return {
-        name,
-        manufactureDate,
-        perishable,
-        expirationDate,
-        price,
-      };
-    };
-
     const checkForNullValues = (product) => {
       for (let property in product) {
         if (property === "expirationDate" && !product.perishable) continue;
@@ -68,7 +62,19 @@ const ProductController = {
 
   async update(req, res, next) {
     try {
-      return res.send();
+      const { id } = req.params;
+      const updatedProps = filterProperties(req.body);
+
+      const product = await knex("products").where({ id }).first();
+
+      if (!product) throw new Error("Product not found.");
+
+      if (Object.values(updatedProps).every((x) => x === undefined))
+        throw new Error("No properties to update provided.");
+
+      await knex("products").update(updatedProps).where({ id });
+
+      return res.status(201).send();
     } catch (error) {
       next(error);
     }
@@ -76,7 +82,7 @@ const ProductController = {
 
   async delete(req, res, next) {
     try {
-      return res.send();
+      return res.status(201).send();
     } catch (error) {
       next(error);
     }
