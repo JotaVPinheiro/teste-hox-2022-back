@@ -32,7 +32,8 @@ const ProductController = {
       for (let property in product) {
         if (property === "expirationDate" && !product.perishable) continue;
 
-        if (product[property] === null) throw new Error(`${property} can't be null.`);
+        if (product[property] === null)
+          throw new Error(`${property} can't be null.`);
       }
     };
 
