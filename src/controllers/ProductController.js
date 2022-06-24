@@ -31,6 +31,16 @@ const filterProperties = (data) => {
   };
 };
 
+const checkBadValues = (product) => {
+  if (
+    product.perishable === true &&
+    product.manufactureDate > product.expirationDate
+  )
+    throw new Error("manufacturedDate can't be after expirationDate.");
+
+  if (product.price < 0) throw new Error("price can't be negative.");
+};
+
 const ProductController = {
   async index(req, res, next) {
     try {
@@ -52,16 +62,9 @@ const ProductController = {
 
       const product = filterProperties(req.body);
 
-      if (
-        product.perishable === true &&
-        product.manufactureDate > product.expirationDate
-      )
-        throw new Error("manufacturedDate can't be after expirationDate.");
-
-      if (product.price < 0) throw new Error("price can't be negative.");
+      checkBadValues(product);
 
       await knex("products").insert(product);
-
       return res.status(201).json(product);
     } catch (error) {
       next(error);
@@ -83,8 +86,9 @@ const ProductController = {
       if (Object.values(updatedProps).every((x) => x === undefined))
         throw new Error("No properties to update provided.");
 
-      await knex("products").update(updatedProps).where({ id });
+      checkBadValues(updatedProps);
 
+      await knex("products").update(updatedProps).where({ id });
       return res.status(201).send();
     } catch (error) {
       next(error);
@@ -100,7 +104,6 @@ const ProductController = {
       if (!product) throw new Error("Product not found.");
 
       await knex("products").del().where({ id });
-
       return res.status(201).send();
     } catch (error) {
       next(error);
