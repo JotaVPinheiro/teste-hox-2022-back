@@ -3,7 +3,8 @@ const knex = require("../database");
 const ProductController = {
   async index(req, res, next) {
     try {
-      return res.send();
+      const products = await knex("products");
+      return res.send(products);
     } catch (error) {
       next(error);
     }
