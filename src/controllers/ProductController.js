@@ -82,6 +82,14 @@ const ProductController = {
 
   async delete(req, res, next) {
     try {
+      const { id } = req.params;
+
+      const product = await knex("products").where({ id }).first();
+
+      if (!product) throw new Error("Product not found.");
+
+      await knex("products").del().where({ id });
+
       return res.status(201).send();
     } catch (error) {
       next(error);
