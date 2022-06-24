@@ -10,7 +10,7 @@ const productSchema = yup.object().shape({
 });
 
 const updateProductSchema = yup.object().shape({
-  name: yup.string().notRequired(),
+  name: yup.string().notRequired().min(1),
   manufactureDate: yup.date().notRequired(),
   perishable: yup.boolean().notRequired(),
   expirationDate: yup.date().notRequired(),
@@ -32,10 +32,7 @@ const filterProperties = (data) => {
 };
 
 const checkBadValues = (product) => {
-  if (
-    product.perishable === true &&
-    product.manufactureDate > product.expirationDate
-  )
+  if (product.manufactureDate > product.expirationDate)
     throw new Error("manufacturedDate can't be after expirationDate.");
 
   if (product.price < 0) throw new Error("price can't be negative.");
@@ -87,6 +84,13 @@ const ProductController = {
         throw new Error("No properties to update provided.");
 
       checkBadValues(updatedProps);
+
+      if (
+        product.perishable == false &&
+        (updatedProps.perishable == false ||
+          updatedProps.perishable == undefined)
+      )
+        updatedProps.expirationDate = null;
 
       await knex("products").update(updatedProps).where({ id });
       return res.status(201).send();
