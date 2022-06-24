@@ -1,4 +1,21 @@
 const knex = require("../database");
+const yup = require("yup");
+
+const productSchema = yup.object().shape({
+  name: yup.string().required(),
+  manufactureDate: yup.date().required(),
+  perishable: yup.boolean().required(),
+  expirationDate: yup.date().required(),
+  price: yup.number().required(),
+});
+
+const updateProductSchema = yup.object().shape({
+  name: yup.string().notRequired(),
+  manufactureDate: yup.date().notRequired(),
+  perishable: yup.boolean().notRequired(),
+  expirationDate: yup.date().notRequired(),
+  price: yup.number().notRequired(),
+});
 
 const filterProperties = (data) => {
   let { name, manufactureDate, perishable, expirationDate, price } = data;
@@ -30,19 +47,10 @@ const ProductController = {
   },
 
   async create(req, res, next) {
-    const checkForNullValues = (product) => {
-      for (let property in product) {
-        if (property === "expirationDate" && !product.perishable) continue;
-
-        if (product[property] === null)
-          throw new Error(`${property} can't be null.`);
-      }
-    };
-
     try {
-      const product = filterProperties(req.body);
+      await productSchema.validate(req.body);
 
-      checkForNullValues(product);
+      const product = filterProperties(req.body);
 
       if (
         product.perishable === true &&
@@ -62,7 +70,10 @@ const ProductController = {
 
   async update(req, res, next) {
     try {
+      await updateProductSchema.validate(req.body);
+
       const { id } = req.params;
+
       const updatedProps = filterProperties(req.body);
 
       const product = await knex("products").where({ id }).first();
