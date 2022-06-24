@@ -1,3 +1,5 @@
+const knex = require("../database");
+
 const ProductController = {
   async index(req, res, next) {
     try {
@@ -49,6 +51,8 @@ const ProductController = {
         throw new Error("manufacturedDate can't be after expirationDate.");
 
       if (product.price < 0) throw new Error("price can't be negative.");
+
+      await knex("products").insert(product);
 
       return res.status(201).json(product);
     } catch (error) {
