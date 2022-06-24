@@ -8,8 +8,48 @@ const ProductController = {
   },
 
   async create(req, res, next) {
+    const filterProperties = (data) => {
+      let {
+        name = null,
+        manufactureDate = null,
+        perishable = null,
+        expirationDate = null,
+        price = null,
+      } = data;
+
+      if (perishable === false) expirationDate = null;
+
+      return {
+        name,
+        manufactureDate,
+        perishable,
+        expirationDate,
+        price,
+      };
+    };
+
+    const checkForNullValues = (product) => {
+      for (let property in product) {
+        if (property === "expirationDate" && !product.perishable) continue;
+
+        if (product[property] === null) throw new Error(`${property} can't be null.`);
+      }
+    };
+
     try {
-      return res.send();
+      const product = filterProperties(req.body);
+
+      checkForNullValues(product);
+
+      if (
+        product.perishable === true &&
+        product.manufactureDate > product.expirationDate
+      )
+        throw new Error("manufacturedDate can't be after expirationDate.");
+
+      if (product.price < 0) throw new Error("price can't be negative.");
+
+      return res.status(201).json(product);
     } catch (error) {
       next(error);
     }
