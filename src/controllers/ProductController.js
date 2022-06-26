@@ -3,7 +3,7 @@ const yup = require("yup");
 
 const productSchema = yup.object().shape({
   name: yup.string().required(),
-  manufactureDate: yup.date().required(),
+  manufacturedDate: yup.date().required(),
   perishable: yup.boolean().required(),
   expirationDate: yup.date().required(),
   price: yup.number().required(),
@@ -11,20 +11,20 @@ const productSchema = yup.object().shape({
 
 const updateProductSchema = yup.object().shape({
   name: yup.string().notRequired().min(1),
-  manufactureDate: yup.date().notRequired(),
+  manufacturedDate: yup.date().notRequired(),
   perishable: yup.boolean().notRequired(),
   expirationDate: yup.date().notRequired(),
   price: yup.number().notRequired(),
 });
 
 const filterProperties = (data) => {
-  let { name, manufactureDate, perishable, expirationDate, price } = data;
+  let { name, manufacturedDate, perishable, expirationDate, price } = data;
 
   if (perishable === false) expirationDate = null;
 
   return {
     name,
-    manufactureDate,
+    manufacturedDate,
     perishable,
     expirationDate,
     price,
@@ -32,7 +32,7 @@ const filterProperties = (data) => {
 };
 
 const checkBadValues = (product) => {
-  if (product.manufactureDate > product.expirationDate)
+  if (product.manufacturedDate > product.expirationDate)
     throw new Error("manufacturedDate can't be after expirationDate.");
 
   if (product.price < 0) throw new Error("price can't be negative.");

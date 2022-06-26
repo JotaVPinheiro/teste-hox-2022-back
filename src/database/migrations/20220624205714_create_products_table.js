@@ -2,7 +2,7 @@ exports.up = async (knex) =>
   knex.schema.createTable("products", (table) => {
     table.increments("id");
     table.string("name").notNullable();
-    table.date("manufactureDate").notNullable();
+    table.date("manufacturedDate").notNullable();
     table.boolean("perishable").notNullable();
     table.date("expirationDate");
     table.float("price").notNullable();
