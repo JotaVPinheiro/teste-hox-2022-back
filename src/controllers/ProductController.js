@@ -1,5 +1,6 @@
 const knex = require("../database");
 const yup = require("yup");
+const jwt = require("jsonwebtoken");
 
 const productSchema = yup.object().shape({
   name: yup.string().required(),
@@ -41,6 +42,10 @@ const checkBadValues = (product) => {
 const ProductController = {
   async index(req, res, next) {
     try {
+      const token = req.headers["x-access-token"];
+      if (!token) throw new Error("No jwt provided.");
+      await jwt.verify(token, "it_must_be_on_.env_but_ok");
+
       const { id } = req.params;
       const query = knex("products");
 
@@ -55,6 +60,10 @@ const ProductController = {
 
   async create(req, res, next) {
     try {
+      const token = req.headers["x-access-token"];
+      if (!token) throw new Error("No jwt provided.");
+      await jwt.verify(token, "it_must_be_on_.env_but_ok");
+
       await productSchema.validate(req.body);
 
       const product = filterProperties(req.body);
@@ -70,6 +79,10 @@ const ProductController = {
 
   async update(req, res, next) {
     try {
+      const token = req.headers["x-access-token"];
+      if (!token) throw new Error("No jwt provided.");
+      await jwt.verify(token, "it_must_be_on_.env_but_ok");
+
       await updateProductSchema.validate(req.body);
 
       const { id } = req.params;
@@ -101,6 +114,10 @@ const ProductController = {
 
   async delete(req, res, next) {
     try {
+      const token = req.headers["x-access-token"];
+      if (!token) throw new Error("No jwt provided.");
+      await jwt.verify(token, "it_must_be_on_.env_but_ok");
+
       const { id } = req.params;
 
       const product = await knex("products").where({ id }).first();
