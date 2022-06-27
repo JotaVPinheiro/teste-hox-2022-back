@@ -3,7 +3,7 @@
 ## Como rodar o projeto
 
 ### Passo 1: Criar o arquivo do banco de dados (SQLite)
-No diretório raiz do projeto crie um diretório chamado ```tmp```, e dentro dele um arquivo ```sqlite.db```.
+No diretório raiz do projeto crie um diretório chamado `tmp`, e dentro dele um arquivo `sqlite.db`.
 
 ### Passo 2: Instalar as dependências
 
@@ -29,6 +29,24 @@ npx knex seed:run
 npm run dev
 ```
 
+## Rotas da aplicação
+
+### Login
+
+GET `/login/` : Retorn um objeto com um JWT.<br>
+
+### Produtos
+
+GET `/products/` : Retorna todos os produtos cadastrados.
+
+GET `/products/:id/` : Retorna o produto com o id especificado.
+
+POST `/products/` : Cadastra um novo produto.
+  
+PUT `/products/:id/` : Edita o produto com o id especificado.
+
+DELETE `/products/:id/` : Deleta o produto com o id especificado.
+
 ## Credenciais de login
 ```json
 {
@@ -37,20 +55,5 @@ npm run dev
 }
 ```
 
-## Rotas da aplicação
-
-### Login
-
-GET ```/login/``` : Retorn um objeto com um JWT.<br>
-
-### Produtos
-
-GET <code>/products/</code> : Retorna todos os produtos cadastrados.
-
-GET <code>/products/:id/</code> : Retorna o produto com o id especificado.
-
-POST <code>/products/</code> : Cadastra um novo produto.
-  
-PUT <code>/products/:id/</code> : Edita o produto com o id especificado.
-
-DELETE <code>/products/:id/</code> : Deleta o produto com o id especificado.
+## Autentificação
+Para acessar as rotas de CRUD dos produtos, adicione, ao header de cada requisição, um `X-Access-Token` com o JWT retornado na rota de login.
