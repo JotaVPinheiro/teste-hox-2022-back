@@ -33,7 +33,15 @@ npm run dev
 
 ### Login
 
-GET `/login/` : Retorn um objeto com um JWT.<br>
+GET `/login/` : Retorn um objeto com um JWT.
+
+Exemplo de body:
+```json
+{
+	"login": "admin@hox.rs",
+	"password": "admin"
+}
+```
 
 ### Produtos
 
@@ -42,8 +50,27 @@ GET `/products/` : Retorna todos os produtos cadastrados.
 GET `/products/:id/` : Retorna o produto com o id especificado.
 
 POST `/products/` : Cadastra um novo produto.
-  
+
+Exemplo de body:
+```json
+{
+	"name": "Toddynho",
+	"manufacturedDate": "2022-06-26",
+	"perishable": true,
+	"expirationDate": "2022-12-26",
+	"price": 2
+}
+```
+
 PUT `/products/:id/` : Edita o produto com o id especificado.
+
+Exemplo de body:
+```json
+{
+	"name": "Nescau",
+	"price": 2.2
+}
+```
 
 DELETE `/products/:id/` : Deleta o produto com o id especificado.
 
